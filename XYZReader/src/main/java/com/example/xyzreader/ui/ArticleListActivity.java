@@ -5,13 +5,11 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.entities.Article;
@@ -81,9 +79,9 @@ public class ArticleListActivity extends AppCompatActivity implements Adapter.On
     }
 
     @Override
-    public void articleClicked(Article article) {
+    public void articleClicked(int position) {
         Intent articleActivity = new Intent(this, ArticleDetailActivity.class);
-        articleActivity.putExtra(ArticleDetailActivity.SELECTED_ARTICLE, article);
+        articleActivity.putExtra(ArticleDetailActivity.SELECTED_ARTICLE, position);
         articleActivity.putParcelableArrayListExtra(ArticleDetailActivity.ARTICLE_LIST, this.articles);
         startActivity(articleActivity);
     }

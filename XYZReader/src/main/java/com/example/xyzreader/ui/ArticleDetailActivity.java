@@ -22,7 +22,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
 
     public static final String SELECTED_ARTICLE = "SELECTED_ARTICLE";
     public static final String ARTICLE_LIST = "ARTICLE_LIST";
-    private Article selectedArticle;
+    private int selectedArticlePosition;
     private List<Article> articles;
 
     @Override
@@ -35,11 +35,17 @@ public class ArticleDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        if (getIntent().hasExtra(SELECTED_ARTICLE)) {
+            selectedArticlePosition = getIntent().getIntExtra(SELECTED_ARTICLE, 0);
+        }
+
+        if (getIntent().hasExtra(ARTICLE_LIST)) {
+            this.articles = getIntent().getParcelableArrayListExtra(ARTICLE_LIST);
+        }
+
         MyPagerAdapter mPagerAdapter = new MyPagerAdapter(getFragmentManager());
         ViewPager mPager = findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
-        //mPager.setPageMargin((int) TypedValue
-          //      .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
         mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
 
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -53,20 +59,8 @@ public class ArticleDetailActivity extends AppCompatActivity {
             }
         });
 
-        if (getIntent().hasExtra(SELECTED_ARTICLE)) {
-            if (getIntent().getParcelableExtra(SELECTED_ARTICLE) != null) {
-                selectedArticle = getIntent().getParcelableExtra(SELECTED_ARTICLE);
-            }
-        }
-
-        if (getIntent().hasExtra(ARTICLE_LIST)) {
-            this.articles = getIntent().getParcelableArrayListExtra(ARTICLE_LIST);
-        }
-
-        if (selectedArticle != null && this.articles != null) {
-            mPagerAdapter.notifyDataSetChanged();
-            final int position = this.articles.indexOf(selectedArticle);
-            mPager.setCurrentItem(position, false);
+        if (this.articles != null) {
+            mPager.setCurrentItem(selectedArticlePosition, false);
         }
     }
 
