@@ -93,16 +93,16 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                                 publishedDate.getTime(),
                                 System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
                                 DateUtils.FORMAT_ABBREV_ALL).toString()
-                                + "<br/>" + " by "
-                                + article.getAuthor()));
+                                + ", By <b>"
+                                + article.getAuthor() + "</b>"));
             } else {
                 subtitleView.setText(Html.fromHtml(
                         outputFormat.format(publishedDate)
-                                + "<br/>" + " by "
-                                + article.getAuthor()));
+                                + ", By <b>"
+                                + article.getAuthor() + "</b>"));
             }
             Picasso.get()
-                    .load(article.getThumb())
+                    .load(article.getPhoto())
                     .into(thumbnailView);
         }
     }

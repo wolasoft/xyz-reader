@@ -9,6 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
@@ -28,13 +29,10 @@ import java.util.List;
 public class ArticleListActivity extends AppCompatActivity implements Adapter.OnArticleClickedListener {
 
     private static final String TAG = ArticleListActivity.class.toString();
-    private Toolbar mToolbar;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
+    private boolean isTablet;
+    private boolean isLandscape;
 
-    // Use default locale format
-    // Most time functions can only handle 1902 - 2037
-    private ArticleViewModel viewModel;
     private ArrayList<Article> articles;
 
     @Override
@@ -42,13 +40,14 @@ public class ArticleListActivity extends AppCompatActivity implements Adapter.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
-        mToolbar = findViewById(R.id.toolbar);
+        isTablet = getResources().getBoolean(R.bool.is_tablet);
+        isLandscape = getResources().getBoolean(R.bool.is_landscape);
 
-        viewModel = ViewModelProviders.of(this).get(ArticleViewModel.class);
+        Toolbar mToolbar = findViewById(R.id.toolbar);
 
-        final View toolbarContainerView = findViewById(R.id.toolbar_container);
-
-        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        // Use default locale format
+        // Most time functions can only handle 1902 - 2037
+        ArticleViewModel viewModel = ViewModelProviders.of(this).get(ArticleViewModel.class);
 
         mRecyclerView = findViewById(R.id.recycler_view);
 
@@ -69,9 +68,16 @@ public class ArticleListActivity extends AppCompatActivity implements Adapter.On
 
         Adapter adapter = new Adapter(articles, this);
         mRecyclerView.setAdapter(adapter);
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(manager);
-        mRecyclerView.setHasFixedSize(true);
+        if (!isTablet && !isLandscape) {
+            LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            mRecyclerView.setLayoutManager(manager);
+            mRecyclerView.setHasFixedSize(true);
+        } else {
+            int columnCount = getResources().getInteger(R.integer.list_column_count);
+            StaggeredGridLayoutManager sglm =
+                    new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(sglm);
+        }
     }
 
     @Override
