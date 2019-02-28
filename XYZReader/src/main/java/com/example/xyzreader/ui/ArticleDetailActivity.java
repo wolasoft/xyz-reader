@@ -1,14 +1,11 @@
 package com.example.xyzreader.ui;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.ViewGroup;
+import android.view.MenuItem;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.entities.Article;
@@ -43,12 +40,12 @@ public class ArticleDetailActivity extends AppCompatActivity {
             this.articles = getIntent().getParcelableArrayListExtra(ARTICLE_LIST);
         }
 
-        MyPagerAdapter mPagerAdapter = new MyPagerAdapter(getFragmentManager());
+        MyPagerAdapter mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), this.articles);
         ViewPager mPager = findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
         mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
 
-        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        mPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
@@ -64,25 +61,14 @@ public class ArticleDetailActivity extends AppCompatActivity {
         }
     }
 
-    private class MyPagerAdapter extends FragmentStatePagerAdapter {
-        MyPagerAdapter(FragmentManager fm) {
-            super(fm);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                supportFinishAfterTransition();
+                return true;
         }
 
-        @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            super.setPrimaryItem(container, position, object);
-            // ArticleDetailFragment fragment = (ArticleDetailFragment) object;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return ArticleDetailFragment.newInstance(articles.get(position));
-        }
-
-        @Override
-        public int getCount() {
-            return (articles != null) ? articles.size() : 0;
-        }
+        return super.onOptionsItemSelected(item);
     }
 }

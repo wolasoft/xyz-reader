@@ -20,6 +20,7 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:background="@color/photo_placeholder"
+            android:transitionName="articleImage"
             android:contentDescription="@string/article_list_photo_description"/>
 
         <LinearLayout

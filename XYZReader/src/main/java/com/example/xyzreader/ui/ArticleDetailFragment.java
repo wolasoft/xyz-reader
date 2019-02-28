@@ -1,17 +1,18 @@
 package com.example.xyzreader.ui;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.graphics.Palette;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,8 +69,21 @@ public class ArticleDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            postponeEnterTransition();
+        }
+
         if (getArguments().containsKey(ArticleDetailActivity.SELECTED_ARTICLE)) {
             this.selectedArticle = getArguments().getParcelable(ArticleDetailActivity.SELECTED_ARTICLE);
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setSharedElementEnterTransition(TransitionInflater.from(getActivity())
+                    .inflateTransition(android.R.transition.move));
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setSharedElementReturnTransition(null);
         }
 
         setHasOptionsMenu(true);
@@ -127,7 +141,6 @@ public class ArticleDetailFragment extends Fragment {
         TextView bylineView = mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
         TextView bodyView = mRootView.findViewById(R.id.article_body);
-        // View progressView = mRootView.findViewById(R.id.progressBar);
 
 
         bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
@@ -159,21 +172,28 @@ public class ArticleDetailFragment extends Fragment {
             bodyView.setText(Html.fromHtml(this.selectedArticle.getBody().replaceAll("(\r\n|\n)", "<br />")));
             Picasso.get()
                     .load(this.selectedArticle.getPhoto())
+                    .noFade()
                     .into(new Target() {
                         @Override
                         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                             if (bitmap != null) {
-                                Palette p = Palette.generate(bitmap, 12);
+                                Palette p = Palette.from(bitmap).generate();
                                 mMutedColor = p.getDarkMutedColor(0xFF333333);
                                 mPhotoView.setImageBitmap(bitmap);
                                 mRootView.findViewById(R.id.meta_bar)
                                         .setBackgroundColor(mMutedColor);
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    startPostponedEnterTransition();
+                                }
                             }
                         }
 
                         @Override
                         public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                            // do nothing
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                startPostponedEnterTransition();
+                            }
                         }
 
                         @Override
@@ -182,13 +202,10 @@ public class ArticleDetailFragment extends Fragment {
                         }
                     });
         } else {
-            Log.v("HELLLO", "ROOT IS NULL");
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
             bylineView.setText("N/A" );
             bodyView.setText("N/A");
         }
-
-        // progressView.setVisibility(View.GONE);
     }
 }
