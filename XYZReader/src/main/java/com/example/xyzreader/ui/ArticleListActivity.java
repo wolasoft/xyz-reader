@@ -5,11 +5,12 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.entities.Article;
@@ -26,7 +27,6 @@ import java.util.List;
  */
 public class ArticleListActivity extends AppCompatActivity implements Adapter.OnArticleClickedListener {
 
-    private static final String TAG = ArticleListActivity.class.toString();
     private RecyclerView mRecyclerView;
     private boolean isTablet;
     private boolean isLandscape;
@@ -40,8 +40,6 @@ public class ArticleListActivity extends AppCompatActivity implements Adapter.On
 
         isTablet = getResources().getBoolean(R.bool.is_tablet);
         isLandscape = getResources().getBoolean(R.bool.is_landscape);
-
-        Toolbar mToolbar = findViewById(R.id.toolbar);
 
         // Use default locale format
         // Most time functions can only handle 1902 - 2037
@@ -79,10 +77,13 @@ public class ArticleListActivity extends AppCompatActivity implements Adapter.On
     }
 
     @Override
-    public void articleClicked(int position) {
+    public void articleClicked(int position, View sharedView) {
         Intent articleActivity = new Intent(this, ArticleDetailActivity.class);
         articleActivity.putExtra(ArticleDetailActivity.SELECTED_ARTICLE, position);
         articleActivity.putParcelableArrayListExtra(ArticleDetailActivity.ARTICLE_LIST, this.articles);
-        startActivity(articleActivity);
+        ActivityOptionsCompat options =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        this, sharedView, "articleImage");
+        startActivity(articleActivity, options.toBundle());
     }
 }

@@ -8,6 +8,7 @@ import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.example.xyzreader.R;
@@ -84,5 +85,16 @@ public class ArticleDetailActivity extends AppCompatActivity {
         public int getCount() {
             return (articles != null) ? articles.size() : 0;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                supportFinishAfterTransition();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

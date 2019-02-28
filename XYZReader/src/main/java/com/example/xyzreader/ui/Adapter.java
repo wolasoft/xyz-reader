@@ -80,7 +80,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            listener.articleClicked(position);
+            listener.articleClicked(position, thumbnailView);
         }
 
         private void bind(Article article) {
@@ -107,6 +107,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     }
 
     public interface OnArticleClickedListener {
-        void articleClicked(int position);
+        void articleClicked(int position, View sharedView);
     }
 }
